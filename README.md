@@ -38,6 +38,8 @@ Feature engineering added on top of the base physical/location features:
 
 Linear Regression (baseline), log-transformed Linear Regression, Decision Tree, Random Forest, XGBoost, LightGBM. Full results in [`Week8/metrics_summary.csv`](Week8/metrics_summary.csv):
 
+Log transform was tried because `ClosePrice` is right-skewed (a small number of very expensive homes stretch the distribution) — predicting `log(ClosePrice)` instead of the raw price is a standard way to handle that.
+
 | Model | R² | MAE | MAPE | MdAPE |
 |---|---|---|---|---|
 | Linear Regression | 0.6901 | $332,998 | 30.35% | 21.98% |
