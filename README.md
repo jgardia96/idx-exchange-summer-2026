@@ -15,15 +15,19 @@ These versions are pinned because they're the ones confirmed to work together en
 
 CRMLS (California Regional Multiple Listing Service) sold-property data, pulled monthly via FTP from IDX Exchange (files prefixed `CRMLSSold`). Filtered to `PropertyType == 'Residential'` and `PropertySubType == 'SingleFamilyResidence'` only. Target variable is `ClosePrice`.
 
-Data files are not in this repo. Notebooks expect the raw monthly CSVs in `/Users/jgd/IDXWORK/datasets/`.
+Data files are not in this repo. Notebooks expect the raw monthly CSVs in `/Users/jgd/IDXWORK/datasets/`. Change directories as necessary to reproduce results.
 
 ## Preprocessing
 
 - Drop rows missing `LivingArea`, `BathroomsTotalInteger`, `Latitude`, `Longitude`, `LotSizeSquareFeet`.
 - Impute `YearBuilt` and `Stories` with the median, `AssociationFee` with 0, boolean features with `False`. All medians computed from train rows only.
-- Remove `ClosePrice` outliers using the 0.5th/99.5th percentile of train-only prices, applied to both train and test.
+- Remove `ClosePrice` outliers using the 0.5th/99.5th percentile of train-only prices, applied to both train and test
 - Remove rows outside California lat/long bounds, non-positive `LivingArea`, and unrealistic bed/bath/lot-size values.
 - Chronological train/test split (train = everything before the cutoff month, test = the cutoff month onward) — never a random split.
+
+Feature selection: candidate features were dropped for low correlation with `ClosePrice` (below ~0.1) or high null rate (above ~30%). Example: `BuildingAreaTotal` had a strong correlation (0.67) but was excluded anyway since it was ~93% null. Other columns like `TaxAnnualAmount` and `MiddleOrJuniorSchoolDistrict` were 100% null. See `Week2/01_exploration.ipynb` for the full correlation/null-rate check.
+
+Location feature: checked `City`, `MLSAreaMajor`, and `CountyOrParish` as candidates. `City` (~1,000 unique values) and `MLSAreaMajor` (~1,020 unique values) were both too high-cardinality for one-hot encoding, so `CountyOrParish` (60 unique values) was used instead.
 
 Feature engineering added on top of the base physical/location features:
 - `BedBathRatio`, `PropertyAge`, `BedroomAreaRatio`
