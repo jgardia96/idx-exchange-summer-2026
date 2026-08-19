@@ -19,6 +19,7 @@ Data files are not in this repo. Notebooks expect the raw monthly CSVs in `/User
 
 ## Preprocessing
 
+- `ListPrice`, `OriginalListPrice`, and `DaysOnMarket` are excluded from every model. They either encode the answer directly (list price is highly correlated with close price) or only exist once a sale process has already started, so a property that's never been listed wouldn't have them — the model needs to work on off-market properties too.
 - Drop rows missing `LivingArea`, `BathroomsTotalInteger`, `Latitude`, `Longitude`, `LotSizeSquareFeet`.
 - Impute `YearBuilt` and `Stories` with the median, `AssociationFee` with 0, boolean features with `False`. All medians computed from train rows only.
 - Remove `ClosePrice` outliers using the 0.5th/99.5th percentile of train-only prices, applied to both train and test
